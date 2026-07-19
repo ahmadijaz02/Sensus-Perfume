@@ -54,6 +54,18 @@ app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// ── Health Check (No DB) ────────────────────────────────────────────────────────
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'API is running',
+    envCheck: {
+      hasMongo: !!process.env.MONGODB_URI,
+      hasJwt: !!process.env.JWT_SECRET
+    }
+  });
+});
+
 // ── MongoDB middleware ────────────────────────────────────────────────────────
 // Connects (or reuses cached connection) on every request
 app.use(async (req, res, next) => {
@@ -74,16 +86,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/settings', settingsRoutes);
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    message: 'Sensus Perfumes API is running',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'production'
-  });
-});
 
 // ── Error handler ─────────────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
