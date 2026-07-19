@@ -95,9 +95,6 @@ app.use((err, req, res, next) => {
 });
 
 // ── Export ───────────────────────────────────────────────────────────────────
-// Vercel serverless handler
-const handler = serverless(app);
-export default handler;
-
-// Also export the app so it can be used by the local dev server
+// Vercel serverless handler (Vercel natively supports Express)
+export default app;
 export { app };
