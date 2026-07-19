@@ -9,7 +9,7 @@ dist-ssr/
 *.local
 
 # Environment variables — NEVER commit these
-.env
+# .env has been removed from gitignore per user request
 .env.local
 .env.production
 .env.development
