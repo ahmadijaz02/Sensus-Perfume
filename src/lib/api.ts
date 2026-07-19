@@ -1,7 +1,13 @@
-// Use local backend in development, production backend in production
-const API_URL = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:5000/api'
-  : 'https://sensusperfume.com/api';
+/**
+ * API base URL configuration.
+ *
+ * Production (Vercel): VITE_API_URL is not set → uses relative '/api'
+ *   → Same domain, no CORS needed, Vercel routes /api/* to serverless function.
+ *
+ * Development: Set VITE_API_URL=http://localhost:5000/api in .env
+ *   → Vite proxies /api to localhost:5000 OR you can set VITE_API_URL directly.
+ */
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Auth helpers
 export const getAuthToken = () => localStorage.getItem('auth-token');
@@ -236,13 +242,8 @@ export const ordersAPI = {
 };
 
 // Products API
-// No client-side cache - rely on server cache for performance
-// Server cache clears immediately on updates, ensuring customers see fresh data
-
 export const productsAPI = {
   getAll: async (enrichWithReviews: boolean = false) => {
-    // Always fetch from server - server has its own cache
-    // This ensures customers always get fresh data after admin updates
     const response = await fetch(`${API_URL}/products?page=1&limit=1000`);
     
     if (!response.ok) {
@@ -250,10 +251,8 @@ export const productsAPI = {
     }
     
     const result = await response.json();
-    const products = result.data || result; // Handle both new paginated and old response
+    const products = result.data || result;
     
-    // Server already includes review stats in response
-    // Only enrich if explicitly requested and data is missing
     if (enrichWithReviews) {
       const needsEnrichment = products.some(
         (p: any) => p.averageRating === undefined || p.totalReviews === undefined
@@ -298,31 +297,13 @@ export const productsAPI = {
   },
 
   getById: async (id: string) => {
-    try {
-      console.log('Fetching product by ID:', id);
-      const response = await fetch(`${API_URL}/products/${id}`);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch product: ${response.statusText}`);
-      }
-      
-      const product = await response.json();
-      console.log('Product fetched:', {
-        id: product._id,
-        name: product.name,
-        hasDescription: !!product.description,
-        descriptionLength: product.description?.length,
-        hasVariants: !!product.variants,
-        variantsCount: product.variants?.length
-      });
-      
-      // Don't wait for reviews - they load asynchronously after
-      // This makes the product page load much faster
-      return product;
-    } catch (error) {
-      console.error('Error fetching product by ID:', error);
-      throw error;
+    const response = await fetch(`${API_URL}/products/${id}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch product: ${response.statusText}`);
     }
+    
+    return response.json();
   },
 
   getByIdWithReviews: async (id: string) => {
@@ -334,7 +315,6 @@ export const productsAPI = {
     
     const product = await response.json();
     
-    // Enrich with review data
     try {
       const reviews = await reviewsAPI.getByProductId(id);
       if (reviews.length > 0) {
@@ -536,6 +516,7 @@ export const reviewsAPI = {
     return response.json();
   }
 };
+
 // Cart API
 export const cartAPI = {
   get: async () => {

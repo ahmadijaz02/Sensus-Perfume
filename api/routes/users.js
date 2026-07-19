@@ -22,7 +22,7 @@ router.get('/', authenticate, requireAdmin, async (req, res) => {
     const db = req.db;
     const users = await db.collection('users')
       .find()
-      .project({ password: 0 }) // Exclude password field
+      .project({ password: 0 })
       .toArray();
     res.json(users);
   } catch (error) {
@@ -39,11 +39,11 @@ router.get('/:id', authenticate, requireAdmin, async (req, res) => {
       { _id: new ObjectId(req.params.id) },
       { projection: { password: 0 } }
     );
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.json(user);
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -56,26 +56,29 @@ router.patch('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const db = req.db;
     const { password, _id, ...updateData } = req.body;
-    
+
     const result = await db.collection('users').findOneAndUpdate(
       { _id: new ObjectId(req.params.id) },
-      { 
+      {
         $set: {
           ...updateData,
           updated_at: new Date()
         }
       },
-      { 
+      {
         returnDocument: 'after',
         projection: { password: 0 }
       }
     );
-    
-    if (!result.value) {
+
+    // MongoDB 6.x returns the document directly
+    const updatedUser = result?.value || result;
+
+    if (!updatedUser || !updatedUser._id) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
-    res.json(result.value);
+
+    res.json(updatedUser);
   } catch (error) {
     console.error('Error updating user:', error);
     res.status(500).json({ error: 'Failed to update user' });
@@ -86,14 +89,14 @@ router.patch('/:id', authenticate, requireAdmin, async (req, res) => {
 router.delete('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const db = req.db;
-    const result = await db.collection('users').deleteOne({ 
-      _id: new ObjectId(req.params.id) 
+    const result = await db.collection('users').deleteOne({
+      _id: new ObjectId(req.params.id)
     });
-    
+
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
     console.error('Error deleting user:', error);

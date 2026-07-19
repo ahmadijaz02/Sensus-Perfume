@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+dist-ssr/
+*.local
+
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.production
+.env.development
+
+# Editor / OS files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test / seed scripts (dev only)
+check-images.js
+check-images.zip
+check-product.js
+seed-admin.js
+seed-products.js
+seed-reviews.js
+seed-testers-reviews.js
+test-update.js
+test-admin-flow.js
+test-cart.js
+test-settings-api.js
+
+# Lock files (keep one, not both)
+bun.lockb

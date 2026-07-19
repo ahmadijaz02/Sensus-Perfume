@@ -25,7 +25,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(false);
   const [addToCartInProgress, setAddToCartInProgress] = useState(false);
   const { user } = useAuth();
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_URL = import.meta.env.VITE_API_URL || '/api';
 
   // Load cart on mount or when user changes
   useEffect(() => {
