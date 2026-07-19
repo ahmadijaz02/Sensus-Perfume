@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { PageLoader } from "@/components/ui/page-loader";
 import FloatingWhatsApp from "@/components/ui/floating-whatsapp";
 import MetaPixel from "@/components/MetaPixel";
+import { Analytics } from "@vercel/analytics/react";
 import { useEffect, useState } from "react";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
@@ -54,6 +55,7 @@ const App = () => {
             <Toaster />
             <Sonner />
             <FloatingWhatsApp />
+            <Analytics />
             <div className={showContent ? "page-fade-in" : "opacity-0"}>
               <BrowserRouter>
                 <MetaPixel />
