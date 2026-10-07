@@ -67,7 +67,7 @@ const Footer = () => {
 
             <div className="flex gap-4">
               <a
-                href="https://www.instagram.com/sensuspk?igsh=MW8xYjVtNTA2YTQ4eA%3D%3D&utm_source=qr"
+                href="https://www.instagram.com/sensus_perfumes/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all duration-300 hover:scale-110 hover:rotate-12"
